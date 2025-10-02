@@ -30,47 +30,13 @@
     },
     {
       "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 2
-          },
-          "conditions": [
-            {
-              "id": "f06fdb54-b4a8-43f8-b5c2-d3fcfbf170d6",
-              "leftValue": "={{ $json.Subject }}",
-              "rightValue": "New Ticket",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.2,
-      "position": [
-        176,
-        0
-      ],
-      "id": "91f2a4bd-e0c3-4411-b1bc-85794dd5f37e",
-      "name": "Check Email Subject"
-    },
-    {
-      "parameters": {
         "jsCode": "const data = $input.first().json.snippet\n\n// Use regex to extract each field\nconst customerMatch = data.match(/Customer Name:\\s*([^I]+?)\\s*ID:/);\nconst idMatch = data.match(/ID:\\s*(\\d+)/);\nconst queryMatch = data.match(/Query:\\s*(.*)$/);\n\nreturn {\n  \n    data: {\n      customer: customerMatch ? customerMatch[1].trim() : null,\n      ticketId: idMatch ? idMatch[1].trim() : null,\n      query: queryMatch ? queryMatch[1].trim() : null,\n      date: new Date().toISOString()\n    }\n  }\n;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        416,
-        -16
+        432,
+        0
       ],
       "id": "857cd5dc-7121-4b0e-85a0-2f38e4b52cf1",
       "name": "Extract Relevant Data"
@@ -143,8 +109,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        640,
-        -16
+        656,
+        0
       ],
       "id": "ab7900ce-699b-4c0c-976f-8c42edd23a07",
       "name": "Send to Google Sheets",
@@ -154,6 +120,40 @@
           "name": "Google Sheets account 2"
         }
       }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "dbb19aa6-602d-40ea-aab6-fdd146caae3a",
+              "leftValue": "={{ $json.Subject }}",
+              "rightValue": "New Ticket",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "e8e5744e-414b-425e-987d-04e2e9e8edbf",
+      "name": "Filter"
     }
   ],
   "pinData": {},
@@ -162,18 +162,7 @@
       "main": [
         [
           {
-            "node": "Check Email Subject",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Check Email Subject": {
-      "main": [
-        [
-          {
-            "node": "Extract Relevant Data",
+            "node": "Filter",
             "type": "main",
             "index": 0
           }
@@ -190,13 +179,24 @@
           }
         ]
       ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Extract Relevant Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
-  "active": false,
+  "active": true,
   "settings": {
     "executionOrder": "v1"
   },
-  "versionId": "89300086-79cf-4e52-ae3c-4804c1c8034d",
+  "versionId": "4eb2f3a8-e929-47bd-95d8-bb57217876ad",
   "meta": {
     "templateCredsSetupCompleted": true,
     "instanceId": "a1d9a3e4ae6c7828066e4ea9adbf282c12c49ccd22990ba0eb1b4cf810ff2d47"
